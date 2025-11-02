@@ -1,0 +1,51 @@
+/* devre varsayımları
+
+A0 girişine gerilim bölücü bağladın
+R1 = 100k (pil + tarafına)
+R2 = 47k (GND tarafına)
+
+LED’ler 150 ohm dirençle dijital pinlerde
+kırmızı = D3
+sarı = D4
+yeşil = D5 */
+
+// kod
+const int pinRed = 3;
+const int pinYellow = 4;
+const int pinGreen = 5;
+const int pinVolt = A0;
+
+float R1 = 100000.0;
+float R2 = 47000.0;
+
+void setup() {
+  pinMode(pinRed, OUTPUT);
+  pinMode(pinYellow, OUTPUT);
+  pinMode(pinGreen, OUTPUT);
+}
+
+void loop() {
+
+  int raw = analogRead(pinVolt);
+
+  float vADC = (raw * (5.0 / 1023.0));
+  float vBat = vADC / (R2 / (R1 + R2));
+
+  digitalWrite(pinRed, LOW);
+  digitalWrite(pinYellow, LOW);
+  digitalWrite(pinGreen, LOW);
+
+  if(vBat > 4.05) {
+    digitalWrite(pinGreen, HIGH);
+  } else if(vBat > 3.60) {
+    digitalWrite(pinYellow, HIGH);
+  } else {
+    digitalWrite(pinRed, HIGH);
+  }
+
+  delay(200);
+}
+
+
+ //  Bu kod “çok mükemmel doğruluk” peşinde değil. Ama seni uğraştırmadan çalışır.
+//  Zekice olan senin hücreleri güvenli kullanman ve aşırı akımdan kaçınmandır. Eğer bu dünyada bir şey değerliyse o, batarya güvenliğidir.

@@ -1,0 +1,24 @@
+#include <iostream>
+#include <string>
+#include <cctype>
+
+using namespace std;
+
+int main() {
+    string isim;
+    cout << "İsminizi giriniz: ";
+    cin >> isim;
+    bool hatali = false;
+    for (char c : isim) {
+        if (!isalpha(static_cast<unsigned char>(c))) { // Harf değilse
+            hatali = true;
+            break;
+        }
+    }
+    if (hatali) {
+        cout << "Hata: İsimde rakam veya özel karakter olamaz!" << endl;
+    } else {
+        cout << "İsim kabul edildi: " << isim << endl;
+    }
+    return 0;
+}

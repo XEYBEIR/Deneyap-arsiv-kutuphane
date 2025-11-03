@@ -1,0 +1,28 @@
+#include <windows.h>
+#include <fstream>
+#include <iostream>
+#include <string>
+
+int main() {
+    std::string path = "C:\\Users\\besir\\Desktop\\Yeni Metin Belgesi (2).txt";
+
+    std::ofstream out(path, std::ios::trunc);
+    if (!out) {
+        MessageBox(NULL, "Dosya acilamadi", "Hata", MB_OK | MB_ICONERROR);
+        return 1;
+    }
+
+    out << "Bu bir ornek metindir.\n";
+    out << "Satir 2: Deneme.\n";
+    out.close();
+
+    // pencere içinde gösterilecek metni oku
+    std::ifstream in(path);
+    std::string content((std::istreambuf_iterator<char>(in)),
+                         std::istreambuf_iterator<char>());
+
+    MessageBoxA(NULL, content.c_str(), "Dosya Icerigi", MB_OK);
+
+    return 0;
+}
+

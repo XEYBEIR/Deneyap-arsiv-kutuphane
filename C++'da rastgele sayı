@@ -1,0 +1,24 @@
+// https://stackoverflow.com/questions/13445688/how-to-generate-a-random-number-in-c
+
+#include <stdio.h>
+#include <math.h>
+#include <complex.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <time.h>
+#include <conio.h>
+int main()
+{
+        int satir, sutun, x, y, rastgele;
+        srand(time(NULL));
+        for (satir = 1; satir <= 4; satir++)
+        {
+            rastgele = rand() % 16;
+            printf("\n%d    ", rastgele);
+            for (sutun = 1; sutun < 4; sutun++)
+                printf("%d \t ", rastgele);
+
+        }
+    return 0;
+}

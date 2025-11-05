@@ -1,0 +1,15 @@
+#include <iostream>
+#include <cstring> //metin fonksiyonları için gerekli olan kütüphane
+using namespace std;
+
+int main() 
+{
+   char kelime[] = "Sinop Deneyap"; 
+   int uzunluk;
+   //strlen() fonksiyonu, metin uzunluğu sayar
+   uzunluk = strlen(kelime);
+   cout << "'" << kelime << " kelimesi " << uzunluk << " harften oluşur."<< endl;
+   
+   return 0;
+   
+}

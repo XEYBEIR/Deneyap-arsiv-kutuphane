@@ -1,0 +1,19 @@
+#include <iostream>
+#include <fstream> // Dosya işlemleri için bu kütüphane şart 
+using namespace std;
+
+int main() {
+  // 1. Bir 'ofstream' (çıktı dosyası) nesnesi oluştur ve dosyayı aç [cite: 3861, 3865]
+  ofstream dosyaYaz("deneyap.txt"); 
+
+  // 2. Dosyaya yaz. Tıpkı cout kullanır gibi << operatörü ile 
+  dosyaYaz << "Merhaba Deneyap!" << endl;
+  dosyaYaz << "Bu ikinci satir." << endl;
+
+  // 3. İşlem bittikten sonra dosyayı kapat 
+  dosyaYaz.close();
+
+  cout << "Dosyaya yazma islemi tamamlandi." << endl;
+
+  return 0;
+}

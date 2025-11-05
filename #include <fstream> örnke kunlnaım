@@ -1,0 +1,30 @@
+#include <iostream>
+#include <fstream> // Dosya işlemleri için [cite: 3860]
+#include <string>  // Satır satır okumak için string kullanmak daha kolaydır
+using namespace std;
+
+int main() {
+  // 1. Bir 'ifstream' (girdi dosyası) nesnesi oluştur ve dosyayı aç 
+  ifstream dosyaOku("deneyap.txt");
+
+  string satir; // Dosyadan okunan her satırı tutacak değişken
+
+  // 2. Dosyanın açılıp açılamadığını kontrol et (belki dosya yoktur)
+  if (dosyaOku.is_open()) { // is_open() dosya açıksa true döndürür 
+    cout << "Dosya icerigi okunuyor:" << endl;
+    
+    // 3. Dosyanın sonuna gelene kadar satır satır oku 
+    // getline(dosyaOku, satir) komutu dosyadan bir satır okur ve 'satir' değişkenine atar
+    while (getline(dosyaOku, satir)) {
+      cout << satir << endl; // Okunan satırı ekrana yazdır
+    }
+
+    // 4. İşlem bittikten sonra dosyayı kapat 
+    dosyaOku.close();
+  }
+  else {
+    cout << "Hata: Dosya acilamadi!" << endl; [cite: 3847]
+  }
+
+  return 0;
+}

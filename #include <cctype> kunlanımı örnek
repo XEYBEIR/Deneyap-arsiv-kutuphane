@@ -1,0 +1,29 @@
+#include <iostream>
+#include <cctype> //karakter fonksiyonları için şart olan kütüphane
+using namespace std;
+
+int main() 
+{
+   char karakter;
+   cout << "Bir Karakter Giriniz (Örn.: 'a', '5', '?'):";
+   cin >> karakter;
+   
+   //isalpha() karakterin alfabe harfi olup olmadığını kontrol eder
+   if (isalpha(karakter))
+   {
+       cout << "'" << karakter << "' bir harftir." << endl;
+   }
+   
+   //isdigit() karakterin rakam olup olmadığını kontrol eder.
+   else if (isdigit(karakter))
+   {
+    cout << "'" << karakter << "' bir rakamdır." << endl;
+       
+   }
+   else 
+   {
+    cout << "'" << karakter << "' bir harf veya rakam değildir." << endl;   
+   }
+   return 0;
+   
+}

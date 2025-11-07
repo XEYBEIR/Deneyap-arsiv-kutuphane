@@ -1,0 +1,20 @@
+<body style="font-family:Arial; text-align:center; margin-top:100px;">
+  <h1>Giriş Menüsü</h1>
+  
+  <button onclick="oyunaBasla()" style="font-size:20px; padding:10px 30px; margin:10px;">
+    Oyuna Başla
+  </button>
+
+  <button onclick="ayarlar()" style="font-size:20px; padding:10px 30px; margin:10px;">
+    Ayarlar
+  </button>
+
+  <script>
+    function oyunaBasla() {
+      alert("Oyuna giriliyor...");
+    }
+    function ayarlar() {
+      alert("Ayarlar açılıyor...");
+    }
+  </script>
+</body>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hesap Oluşturma (Basit Demo)</title>
+  <style>
+    body { font-family: Inter, Arial, sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; background:#f5f7fb; margin:0; }
+    .card { background:#fff; padding:24px; border-radius:12px; box-shadow:0 6px 20px rgba(15,20,50,0.08); width:360px; }
+    h2 { margin:0 0 12px 0; font-size:20px; text-align:center; }
+    label { display:block; margin:10px 0 6px; font-size:13px; color:#333; }
+    input[type="text"], input[type="password"], input[type="number"] {
+      width:100%; padding:10px 12px; border-radius:8px; border:1px solid #d7dce8; box-sizing:border-box;
+    }
+    .row { display:flex; gap:8px; margin-top:14px; }
+    button { flex:1; padding:10px; border-radius:8px; border:0; cursor:pointer; font-weight:600; }
+    button.create { background:#2563eb; color:#5f1212; }
+    button.show { background:#eef2ff; color:#1f2937; }
+    .info { font-size:13px; color:#555; margin-top:10px; }
+    .error { color:#b91c1c; font-size:13px; margin-top:8px; }
+    .list { margin-top:14px; font-size:13px; }
+    .account { background:#f8fafc; padding:8px; border-radius:8px; margin-top:8px; }
+    small.hint { display:block; margin-top:6px; color:#6b7280; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Hesap Oluştur</h2>
+
+    <label for="username">Kullanıcı adı</label>
+    <input id="username" type="text" placeholder="kullanici_adi123" autocomplete="username" />
+
+    <label for="password">Şifre</label>
+    <input id="password" type="password" placeholder="en az 6 karakter" autocomplete="new-password" />
+
+    <label for="height">Boy (cm)</label>
+    <input id="height" type="number" placeholder="örn: 175" min="50" max="250" />
+
+    <div class="error" id="error"></div>
+
+    <div class="row">
+      <button class="create" id="createBtn">Hesap Aç</button>
+      <button class="show" id="showBtn">Kayıtlı Hesapları Göster</button>
+    </div>
+
+    <div class="info">
+      <small class="hint">Not: Bu demo sadece tarayıcıda çalışır. Şifreler SHA-256 ile hashlenir ve <code>localStorage</code>'da saklanır — gerçek uygulama için sunucu tarafı, tuz (salt) ve güvenli saklama gereklidir.</small>
+    </div>
+
+    <div class="list" id="accountsList" aria-live="polite"></div>
+  </div>
+
+  <script>
+    // Yardımcı: UTF-8 string -> ArrayBuffer
+    function str2ab(str) {
+      return new TextEncoder().encode(str);
+    }
+
+    // SHA-256 hash (Web Crypto API) -> hex string
+    async function hashSHA256(text) {
+      const buf = await crypto.subtle.digest('SHA-256', str2ab(text));
+      const arr = Array.from(new Uint8Array(buf));
+      return arr.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // LocalStorage anahtar
+    const STORAGE_KEY = 'demo_accounts_v1';
+
+    // Hesapları getir (array)
+    function loadAccounts() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    // Hesapları kaydet
+    function saveAccounts(accounts) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(accounts));
+    }
+
+    // Validasyon
+    function validateInput(username, password, height) {
+      if (!username || username.length < 3) return 'Kullanıcı adı en az 3 karakter olmalı.';
+      if (!/^[a-zA-Z0-9_çğıöşüÇĞİÖŞÜ-]+$/.test(username)) return 'Kullanıcı adı sadece harf, rakam, alt çizgi veya tire içerebilir.';
+      if (!password || password.length < 6) return 'Şifre en az 6 karakter olmalı.';
+      if (!height || isNaN(height)) return 'Boy düzgün bir sayı olmalı.';
+      if (height < 50 || height > 250) return 'Boy 50-250 cm aralığında olmalı.';
+      return null;
+    }
+
+    // Hesap oluşturma
+    document.getElementById('createBtn').addEventListener('click', async () => {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const height = Number(document.getElementById('height').value);
+      const errEl = document.getElementById('error');
+      errEl.textContent = '';
+
+      const v = validateInput(username, password, height);
+      if (v) { errEl.textContent = v; return; }
+
+      const accounts = loadAccounts();
+      if (accounts.some(a => a.username.toLowerCase() === username.toLowerCase())) {
+        errEl.textContent = 'Bu kullanıcı adı zaten alınmış.';
+        return;
+      }
+
+      // Şifreyi hashleyelim (asenkron)
+      try {
+        const passwordHash = await hashSHA256(password);
+        const newAcc = {
+          id: Date.now(),
+          username,
+          passwordHash, // demo amaçlı; sunucu tarafında tuz kullan
+          heightCm: height,
+          createdAt: new Date().toISOString()
+        };
+        accounts.push(newAcc);
+        saveAccounts(accounts);
+        showAccounts();
+        // alanları temizle
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('height').value = '';
+        errEl.style.color = 'green';
+        errEl.textContent = 'Hesap başarıyla oluşturuldu.';
+        setTimeout(()=>{ errEl.textContent=''; errEl.style.color=''; }, 2000);
+      } catch (e) {
+        errEl.textContent = 'Şifre hashlenirken hata oluştu.';
+      }
+    });
+
+    // Kayıtlı hesapları göster
+    function showAccounts() {
+      const listEl = document.getElementById('accountsList');
+      const accounts = loadAccounts();
+      if (!accounts.length) {
+        listEl.innerHTML = '<div class="account">Kayıtlı hesap yok.</div>';
+        return;
+      }
+      // Listeyi ters sırada göster (yeniler üstte)
+      const html = accounts.slice().reverse().map(a => {
+        return `
+          <div class="account">
+            <strong>${escapeHtml(a.username)}</strong>
+            <div>Boy: ${escapeHtml(String(a.heightCm))} cm</div>
+            <div style="opacity:.7; font-size:12px; margin-top:6px;">oluşturulma: ${new Date(a.createdAt).toLocaleString()}</div>
+            <div style="opacity:.6; font-size:11px; margin-top:6px;">hash: <code style="word-break:break-all;">${escapeHtml(a.passwordHash)}</code></div>
+          </div>
+        `;
+      }).join('');
+      listEl.innerHTML = html;
+    }
+
+    // XSS koruma için basit kaçış
+    function escapeHtml(s) {
+      return s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
+    }
+
+    document.getElementById('showBtn').addEventListener('click', showAccounts);
+
+    // İlk yüklemede listeyi göster
+    showAccounts();
+  </script>
+</body>
+</html>

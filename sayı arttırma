@@ -1,0 +1,12 @@
+<body>
+  <h1>Sayı: <span id="sayac">0</span></h1>
+  <button id="arttir">Tıkla</button>
+
+  <script>
+    let sayi = 0;
+    document.getElementById('arttir').onclick = function() {
+      sayi++;
+      document.getElementById('sayac').innerText = sayi;
+    }
+  </script>
+</body>

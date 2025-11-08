@@ -1,0 +1,20 @@
+#include "lsm6dsm.h"
+LSM6DSM IMU;
+
+void setup (){
+  Serial.begin(115200);
+  IMU.begin();
+}
+
+void loop(){
+  Serial.print("x_ekseni: ");
+  Serial.println(IMU.readFloatAccelX());
+
+  Serial.print("y_ekseni: ");
+  Serial.println(IMU.readFloatAccelY());
+
+  Serial.print("z_ekseni: ");
+  Serial.println(IMU.readFloatAccelZ());
+
+  delay (500);
+}

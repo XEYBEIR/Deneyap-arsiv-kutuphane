@@ -1,0 +1,43 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+string* gorevHazirligiKontrol(int iha[6][4]) {
+    static string durum[6];
+
+    for(int i = 0; i < 6; i++) {
+        if(iha[i][0] > 10)
+            durum[i] = "Agir yuk, kalkis reddedildi!";
+        else if(iha[i][1] < 40)
+            durum[i] = "Pil yetersiz, gorev iptal!";
+        else if(iha[i][2] < 50)
+            durum[i] = "GPS sinyali zayif, konum kaybi riski!";
+        else if(iha[i][3] > 40)
+            durum[i] = "Ruzgar cok siddetli, ucus guvensiz!";
+        else
+            durum[i] = "Gorev icin hazir! Ucusa izin verildi.";
+    }
+
+    return durum;
+}
+
+int main() {
+    
+    int iha[6][4] = {
+        {8, 70, 60, 20},
+        {12, 90, 80, 15},
+        {5, 35, 55, 10},
+        {9, 60, 40, 45},
+        {7, 50, 70, 30},
+        {11, 80, 65, 25}
+    };
+
+    string* durum = gorevHazirligiKontrol(iha);
+
+    cout << "IHA Gorev Hazirligi Durumlari:" << endl;
+    for(int i = 0; i < 6; i++) {
+        cout << "IHA " << i+1 << ": " << durum[i] << endl;
+    }
+
+    return 0;
+}
